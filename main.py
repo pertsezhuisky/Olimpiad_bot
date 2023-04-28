@@ -7,7 +7,7 @@ import requests
 Многопредметная олимпиада «Юные таланты», Отраслевая олимпиада школьников «Газпром», Кутафинская олимпиада школьников по праву.
 
 """
-lst_olimpiads_open_page = [
+lst_olimpiads_nto = [
                  "https://olimpiada.ru/activity/5369", "https://olimpiada.ru/activity/5516", "https://olimpiada.ru/activity/199"
                  ] 
 
@@ -17,12 +17,24 @@ lst_olimpiads_special = [
 ]
 
 
-def get_special_pages():
-    for url in lst_olimpiads_special:
-        request = requests.get(url)
-        bs = BeautifulSoup(request.text, 'html.parser')
-        name = bs.find("h1")
-        info = bs.find("div", class_="info")
+def get_special_pages(url):
+    request = requests.get(url)
+    bs = BeautifulSoup(request.text, 'html.parser')
+    name = bs.find("h1")
+    info = bs.find("div", class_="info")
+    
+    try:
+        dct = {
+            "name":name.text,
+            "grade":grade.text,
+            "description":description.text.replace("\n","").replace("\t","").replace("Еще", "").replace("Свернуть описание", "").replace("...", "."),
+            "subjects": subj.text.replace("\n", "").replace("\xa0", " "),
+            "level": level,
+            
+        }
+    except:
+        pass
+
         
         
 
@@ -31,7 +43,7 @@ def get_standart_pages(url):
     bs = BeautifulSoup(request.text, 'html.parser')
     name = bs.find("h1")
     grade = bs.find("span", class_="classes_types_a")
-    description = bs.find("div", class_="info block_with_margin_bottom")
+    info = bs.find("div", class_="info block_with_margin_bottom")
     subj = bs.find("div", class_="subject_tags_full")
     level_1 = bs.find_all("div", class_="f_blocks")
     for perch in level_1:
@@ -43,7 +55,7 @@ def get_standart_pages(url):
         dct ={
             "name":name.text,
             "grade":grade.text,
-            "description":description.text.replace("\n","").replace("\t","").replace("Еще", "").replace("Свернуть описание", "").replace("...", "."),
+            "info":info.text.replace("\n","").replace("\t","").replace("Еще", "").replace("Свернуть описание", "").replace("...", "."),
             "subjects": subj.text.replace("\n", "").replace("\xa0", " "),
             "level": level,
             } 
@@ -54,3 +66,6 @@ def get_standart_pages(url):
 
 for web in lst_olimpiads_open_page:
     print(get_standart_pages(web))
+
+for webpage in lst_olimpiads_special:
+    print(get_special_pages(webpage))
