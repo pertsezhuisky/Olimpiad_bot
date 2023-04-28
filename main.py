@@ -7,14 +7,27 @@ import requests
 Многопредметная олимпиада «Юные таланты», Отраслевая олимпиада школьников «Газпром», Кутафинская олимпиада школьников по праву.
    
 """
-lst_olimpiads = [
-                 "https://olimpiada.ru/activity/5369","https://olimpiada.ru/activity/22", "https://olimpiada.ru/activity/125", "https://olimpiada.ru/activity/123",
-                 "https://olimpiada.ru/activity/181", "https://olimpiada.ru/activity/146", "https://olimpiada.ru/activity/233", "https://olimpiada.ru/activity/22",
-                 "https://olimpiada.ru/activity/240", "https://olimpiada.ru/activity/5516", "https://olimpiada.ru/activity/199"
+lst_olimpiads_open_page = [
+                 "https://olimpiada.ru/activity/5369", "https://olimpiada.ru/activity/5516", "https://olimpiada.ru/activity/199"
                  ] 
 
+lst_olimpiads_special = [
+    "https://olimpiada.ru/activity/22", "https://olimpiada.ru/activity/125", "https://olimpiada.ru/activity/123", "https://olimpiada.ru/activity/240"
+    "https://olimpiada.ru/activity/181", "https://olimpiada.ru/activity/146", "https://olimpiada.ru/activity/233", "https://olimpiada.ru/activity/22",
+]
 
-for url in lst_olimpiads:
+
+def get_special_pages():
+    for url in lst_olimpiads_special:
+        request = requests.get(url)
+        bs = BeautifulSoup(request.text, 'html.parser')
+        name = bs.find("h1")
+        print(name)
+        
+
+
+
+def get_standart_pages(url):
     request = requests.get(url)
     bs = BeautifulSoup(request.text, 'html.parser')
     name = bs.find("h1")
@@ -27,7 +40,6 @@ for url in lst_olimpiads:
             perch = perch.text.replace("Перечень 2022/23 →", "")
             level = perch[22:]
             break
-    print(level)
     try:
         dct ={
             "name":name.text,
@@ -35,8 +47,10 @@ for url in lst_olimpiads:
             "description":description.text.replace("\n","").replace("\t","").replace("Еще", "").replace("Свернуть описание", "").replace("...", "."),
             "subjects": subj.text.replace("\n", "").replace("\xa0", " "),
             "level": level,
-            }
-        print(dct)    
+            } 
+        return dct
     except:
         pass
 
+for web in lst_olimpiads_open_page:
+    print(get_standart_pages(web))
