@@ -5,7 +5,7 @@ import requests
 """
 НТО, Высшая проба, всесиб, физтех, Олимпиада школьников «Ломоносов», Санкт-Петербургского государственного университета, Всероссийская олимпиада школьников «Высшая проба», 
 Многопредметная олимпиада «Юные таланты», Отраслевая олимпиада школьников «Газпром», Кутафинская олимпиада школьников по праву.
-   
+
 """
 lst_olimpiads_open_page = [
                  "https://olimpiada.ru/activity/5369", "https://olimpiada.ru/activity/5516", "https://olimpiada.ru/activity/199"
@@ -22,10 +22,9 @@ def get_special_pages():
         request = requests.get(url)
         bs = BeautifulSoup(request.text, 'html.parser')
         name = bs.find("h1")
-        print(name)
+        info = bs.find("div", class_="info")
         
-
-
+        
 
 def get_standart_pages(url):
     request = requests.get(url)
@@ -51,6 +50,7 @@ def get_standart_pages(url):
         return dct
     except:
         pass
+
 
 for web in lst_olimpiads_open_page:
     print(get_standart_pages(web))
