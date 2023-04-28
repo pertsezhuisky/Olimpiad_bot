@@ -39,3 +39,4 @@ for url in lst_olimpiads:
         print(dct)    
     except:
         pass
+
