@@ -64,7 +64,7 @@ def get_standart_pages(url):
         pass
 
 
-for web in lst_olimpiads_open_page:
+for web in lst_olimpiads_nto:
     print(get_standart_pages(web))
 
 for webpage in lst_olimpiads_special:
