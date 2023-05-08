@@ -1,12 +1,10 @@
 "Файл, где будем вытаскивать инфу с сайта НТО с помошью ссылок из файла NTO_ALL_LINKS"
 
 import requests
-from NTO_ALL_LINKS import links_to_nto_eight_eleven
+from NTO_ALL_LINKS import links_to_nto
 from bs4 import BeautifulSoup
 
-
-
-for url in links_to_nto_eight_eleven:
+for url in links_to_nto:
     request = requests.get(url)
     bs = BeautifulSoup(request.text, "html.parser")
     name = bs.find("h1").text.replace("  ", "").replace("\n", "")
@@ -30,8 +28,6 @@ for url in links_to_nto_eight_eleven:
     except:
         pass
      
-    
-        
     list_subjects = []
     subjects = bs.find_all("span", class_="input-title")
     for sub in subjects:
@@ -51,11 +47,13 @@ for url in links_to_nto_eight_eleven:
             dash_replacement = date_end.find("—")
             date_end = date_end[dash_replacement+1:]
 
-
-    grade = "8-11 класс"    
+    if "(Студенческий трек)" not in name:
+        grade = "8-11 класс"   
+    else:
+        grade = "Студенческий трек" 
     type_olimpiad = "олимпиада"
     format = "очно-заочная"
-    
+
 
     print(name, date_begin, date_end, type_olimpiad, format, list_subjects, level, prizes, grade)
 
