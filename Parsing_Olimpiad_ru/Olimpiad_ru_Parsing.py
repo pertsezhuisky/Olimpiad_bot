@@ -1,7 +1,6 @@
-
-
 import requests
 import re
+
 from bs4 import BeautifulSoup
 from Olimpiad_ALL_LINKS import URL_LIST_ALL_LINKS
 
@@ -13,8 +12,9 @@ def get_standart_pages(url):
     dates = bs.find("table", class_="events_for_activity")
     try:
         dates_name = dates.find_all("div",class_="event_name")
-        dates_numbers = dates.find_all("td", colspan=2)
+        dates_numbers = dates.find_all("td", colspan=1)
         for date in dates_numbers:
+            date_begin = date
             print(date.text.replace("Прошедшие события", ""), url)
     except:
         print("че-то не то", url)
@@ -25,8 +25,7 @@ def get_standart_pages(url):
   
     for perch in level_1:
         if perch.text[3:10] == "Перечне":
-            perch = perch.text.replace("Перечень 2022/23 →", "")
-            level = perch[22:]
+            level = int(perch.text[54:].replace("Перечень 2022/23 →", ""))
             break
     try:
         dct ={
@@ -40,5 +39,5 @@ def get_standart_pages(url):
         pass
 
 
-for webpage in URL_LIST_ALL_LINKS:
-    print(get_standart_pages(webpage))
+for web in URL_LIST_ALL_LINKS:
+    print(get_standart_pages(web))
