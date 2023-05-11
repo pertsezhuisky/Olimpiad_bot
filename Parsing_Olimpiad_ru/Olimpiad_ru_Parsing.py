@@ -1,5 +1,4 @@
 import requests
-import re
 import datetime
 
 from bs4 import BeautifulSoup
@@ -12,6 +11,7 @@ def get_standart_pages(url):
     level = 0
     date_begin = datetime.date(1970,1,1)
     date_end = datetime.date(1990,1,1)
+    prizes = "Noting found"
 
     request = requests.get(url)
     bs = BeautifulSoup(request.text, 'html.parser')
@@ -20,11 +20,13 @@ def get_standart_pages(url):
 
     dates = bs.find("table", class_="events_for_activity")
     if dates != None:
-        dates_numbers = dates.find_all("td", colspan=1)
-        dates_labels = dates.find_all("td", colspan=2)
-        date_begin = str_to_dt_b(dates_labels[0].text.replace("Прошедшие события", "")) 
-        date_end = str_to_dt_e(dates_numbers[len(dates_numbers)-1].text.replace("Прошедшие события", "")) 
-        
+        try:
+            dates_numbers = dates.find_all("td", colspan=1)
+            dates_labels = dates.find_all("td", colspan=2)
+            date_begin = str_to_dt_b(dates_labels[0].text.replace("Прошедшие события", "")) 
+            date_end = str_to_dt_e(dates_numbers[len(dates_numbers)-1].text.replace("Прошедшие события", "")) 
+        except:
+            pass    
         
     type_olimpiad = "олимпиада"
     
@@ -37,6 +39,13 @@ def get_standart_pages(url):
     for perch in level_1:
         if perch.text[3:10] == "Перечне":
             level = int(perch.text[54:].replace("Перечень 2022/23 →", ""))
+        if perch.text[1:6] == "Призы":
+            prizes = perch.text[6:]
+        print(perch.text[1:7])
+        if perch.text[1:7] == "Льготы":
+            prizes = perch.text[23:].replace("Подробнее о льготах →", "")
+        
+        
     try:
         dct = {
             "name":name.text,
@@ -46,12 +55,12 @@ def get_standart_pages(url):
             "level": level,
             "grade":grade.text,
             "subjects": subj.text.replace("\n", "").replace("\xa0", " ").replace(" язык", "").split(),
-            
+            "prizes": prizes,
             } 
         return dct
     except:
         pass
 
 
-for web in URL_LIST_ALL_LINKS:
-    print(get_standart_pages(web))
+#for web in URL_LIST_ALL_LINKS:
+print(get_standart_pages("https://olimpiada.ru/activity/88"))

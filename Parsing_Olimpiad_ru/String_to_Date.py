@@ -1,4 +1,5 @@
 import datetime
+from Olimpiad_ru_Parsing import date_begin
 
 rus_to_eng_mn = {
                 "янв" :	1,
@@ -15,21 +16,22 @@ rus_to_eng_mn = {
                 "дек" : 12,
                 }
 
-
+mnt = 0
 
 def str_to_dt_b(dt_b):
     year = int(str(datetime.datetime.now())[0:4])
     dt_b = dt_b.replace("..."," ").split()
     if dt_b[1].isdigit() == True:
-        print(dt_b[2])
         dt_b_mn = rus_to_eng_mn[dt_b[2]]
     else:
         dt_b_mn = rus_to_eng_mn[dt_b[1]]
+    mnt = dt_b_mn
     return datetime.date(year, dt_b_mn, int(dt_b[0]))
     
 def str_to_dt_e(dt_e):
     year = int(str(datetime.datetime.now())[0:4])
-    dt_e = dt_e.replace("..."," ").split()[0:2]
-    dt_e_mn = rus_to_eng_mn[dt_e[1]]
-    return datetime.date(year, dt_e_mn, int(dt_e[0]))
+    dt_e = dt_e.replace("..."," ").split()[::-1]
+    dt_e_mn = rus_to_eng_mn[dt_e[0]]
+
+    return datetime.date(year, dt_e_mn, int(dt_e[1]))
     
