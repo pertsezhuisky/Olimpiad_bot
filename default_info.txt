@@ -2,8 +2,8 @@
 Начало олимпиады(date_begin) - тип: дата (стандарт модуля python метод date пр. datetime.date())
 Конец олимпиады(date_end) - тип: дата (стандарт модуля python метод date пр. datetime.date())
 Тип олимпиады(type_olimpiad) - 
+Уровень олимпиады(level) -
 Формат (format) -
-Список (list_subjects) -
-Уровень олимпиады(level) - 
+Список предметов (list_subjects) -
 Награды (prizes) -
 Класс (grade) - 
