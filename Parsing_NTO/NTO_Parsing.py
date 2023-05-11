@@ -4,6 +4,8 @@ import requests
 from NTO_ALL_LINKS import links_to_nto
 from bs4 import BeautifulSoup
 
+flag = 0
+
 for url in links_to_nto:
     request = requests.get(url)
     bs = BeautifulSoup(request.text, "html.parser")
@@ -12,18 +14,14 @@ for url in links_to_nto:
     for prize in level_sps:
         prize = prize.text.replace("  ", "").replace("\n", "")
         if "уровень РСОШ" in prize:
-            level = prize 
-        else:
-            level = "No Info"
+            level = prize
         if "100" in prize:
             prizes = prize  
-        else:
-            prizes = "No Info"
-        
+    
     try:
-        if level == []:
+        if level == [] or level == "":
             level = "No Info"
-        if prizes == []:
+        if prizes == [] or prizes == "":
             prizes = "No Info"
     except:
         pass
