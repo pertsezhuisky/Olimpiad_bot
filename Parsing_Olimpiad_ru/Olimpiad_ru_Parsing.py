@@ -3,7 +3,7 @@ import datetime
 
 from bs4 import BeautifulSoup
 from Olimpiad_ALL_LINKS import URL_LIST_ALL_LINKS
-from String_to_Date import str_to_dt_b, str_to_dt_e
+from String_to_Date import DatesConverter
 
 cnt_passed = 0
 cnt_errors = 0
@@ -23,13 +23,9 @@ def get_standart_pages(url):
 
     dates = bs.find("table", class_="events_for_activity")
     if dates != None:
-        try:
-            dates_numbers = dates.find_all("td", colspan=1)
-            dates_labels = dates.find_all("td", colspan=2)  
-            date_begin = str_to_dt_b(dates_labels[0].text.replace("Прошедшие события", ""))
-            date_end = str_to_dt_e(dates_numbers[len(dates_numbers)-1].text.replace("Прошедшие события", "")) 
-        except:
-            print("Error in date", url)
+        dates_numbers = dates.find_all("td", colspan=1)
+        dates_labels = dates.find_all("td", colspan=2)  
+        date_converter = DatesConverter(dates_numbers, dates_labels)
 
     type_olimpiad = "олимпиада"
     
