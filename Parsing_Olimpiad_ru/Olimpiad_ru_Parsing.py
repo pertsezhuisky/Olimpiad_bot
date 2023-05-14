@@ -13,8 +13,8 @@ def get_standart_pages(url):
     level = 0
     date_begin = datetime.date(1970,1,1)
     date_end = datetime.date(1990,1,1)
-    prizes = "Noting found"
-    format = "Noting found"
+    prizes = "Nothing found"
+    format = "Nothing found"
 
     request = requests.get(url)
     bs = BeautifulSoup(request.text, 'html.parser')
@@ -25,13 +25,11 @@ def get_standart_pages(url):
     if dates != None:
         try:
             dates_numbers = dates.find_all("td", colspan=1)
-            dates_labels = dates.find_all("td", colspan=2)
-            date_begin = str_to_dt_b(dates_labels[0].text.replace("Прошедшие события", "")) 
+            dates_labels = dates.find_all("td", colspan=2)  
+            date_begin = str_to_dt_b(dates_labels[0].text.replace("Прошедшие события", ""))
             date_end = str_to_dt_e(dates_numbers[len(dates_numbers)-1].text.replace("Прошедшие события", "")) 
         except:
             print("Error in date", url)
-    if date_begin == datetime.date(1970,1,1) or date_end == datetime.date(1990,1,1):
-        print("Default", url)
 
     type_olimpiad = "олимпиада"
     
@@ -69,6 +67,8 @@ def get_standart_pages(url):
 
     except:
         pass
+
+    
 
 
 for web in URL_LIST_ALL_LINKS:
