@@ -3,7 +3,7 @@ import datetime
 
 from bs4 import BeautifulSoup
 from Olimpiad_ALL_LINKS import URL_LIST_ALL_LINKS
-from String_to_Date import DatesConverter
+from String_to_Date import check_date
 
 cnt_passed = 0
 cnt_errors = 0
@@ -22,11 +22,17 @@ def get_standart_pages(url):
     name = bs.find("h1")
 
     dates = bs.find("table", class_="events_for_activity")
-    if dates != None:
-        dates_numbers = dates.find_all("td", colspan=1)
-        dates_labels = dates.find_all("td", colspan=2)  
-        date_converter = DatesConverter(dates_numbers, dates_labels)
 
+    try:
+        if dates != None:
+            dates_numbers = dates.find_all("td", colspan=1)
+            dates_labels = dates.find_all("td", colspan=2)  
+            date_converter = check_date(dates_labels, dates_numbers)
+            date_begin = date_converter[0]
+            date_end = date_converter[1]
+    except:
+        print("НЕ РАБОТАЕТ")
+    
     type_olimpiad = "олимпиада"
     
    
@@ -37,7 +43,17 @@ def get_standart_pages(url):
   
     for perch in level_1:
         if perch.text[3:10] == "Перечне":
-            level = int(perch.text[54:].replace("Перечень 2022/23 →", ""))
+            if perch.text[54].isdigit():
+                level = int(perch.text[54].replace("Перечень 2022/23 →", ""))
+            else:
+                cnt = 54
+                while cnt < len(perch.text):
+                    if perch.text[cnt].isdigit():
+                        level = int(perch.text[cnt].replace("Перечень 2022/23 →", ""))
+                        break
+                    else:
+                        cnt = cnt + 1
+
         if perch.text[1:6] == "Призы":
             prizes = perch.text[6:]
         if perch.text[1:7] == "Льготы":
@@ -47,7 +63,6 @@ def get_standart_pages(url):
     
 
     try:
-        print(url)
         dct = {
             "name":name.text,
             "begin-date": date_begin,
@@ -58,6 +73,7 @@ def get_standart_pages(url):
             "grade":grade.text,
             "subjects": subj.text.replace("\n", "").replace("\xa0", " ").replace(" язык", "").split(),
             "prizes": prizes,
+            "URL" : url,
             } 
         return dct
 
