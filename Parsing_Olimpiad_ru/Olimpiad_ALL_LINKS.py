@@ -11,13 +11,14 @@ from bs4 import BeautifulSoup
 """  
 
 URL_LIST = [
-    "https://olimpiada.ru/activity/22", "https://olimpiada.ru/activity/125", "https://olimpiada.ru/activity/123", "https://olimpiada.ru/activity/240"
+    "https://olimpiada.ru/activity/22", "https://olimpiada.ru/activity/125", "https://olimpiada.ru/activity/123", "https://olimpiada.ru/activity/240",
     "https://olimpiada.ru/activity/181", "https://olimpiada.ru/activity/146", "https://olimpiada.ru/activity/233", "https://olimpiada.ru/activity/357",
     "https://olimpiada.ru/activity/199",
 
            ]
 
 URL_LIST_ALL_LINKS = ["https://olimpiada.ru/activity/5516",]
+
 
 
 for url in URL_LIST: 
@@ -27,4 +28,9 @@ for url in URL_LIST:
         link = "https://olimpiada.ru/" + elem["href"]
         if link not in URL_LIST_ALL_LINKS:
             URL_LIST_ALL_LINKS.append(link)
+
+   
+
+   
+
 

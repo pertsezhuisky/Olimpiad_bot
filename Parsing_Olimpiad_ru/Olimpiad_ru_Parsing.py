@@ -11,8 +11,8 @@ cnt_errors = 0
 def get_standart_pages(url):
     #If mesuaraments are not found on website then default will be used
     level = 0
-    date_begin = datetime.date(1970,1,1)
-    date_end = datetime.date(1990,1,1)
+    date_begin = "01-01-1970"
+    date_end = "01-01-1990"
     prizes = "Nothing found"
     format = "Nothing found"
 
@@ -20,27 +20,53 @@ def get_standart_pages(url):
     bs = BeautifulSoup(request.text, 'html.parser')
 
     name = bs.find("h1")
-
     dates = bs.find("table", class_="events_for_activity")
 
     try:
+
         if dates != None:
             dates_numbers = dates.find_all("td", colspan=1)
             dates_labels = dates.find_all("td", colspan=2)  
             date_converter = check_date(dates_labels, dates_numbers)
-            date_begin = date_converter[0]
-            date_end = date_converter[1]
+            # If you need to collect info in datetime.date you should remove str, split and join functions
+            date_begin = str(date_converter[0]).split("-")[::-1]
+            date_begin = "-".join(date_begin)
+            date_end = str(date_converter[1]).split("-")[::-1]
+            date_end = "-".join(date_end)
+
     except:
-        print("НЕ РАБОТАЕТ")
+        pass
     
-    type_olimpiad = "олимпиада"
-    
-   
+    description = bs.find("div", class_="info block_with_margin_bottom")
+    if description != None:
+        description = description.text.replace("\n","").replace("\t","").replace("Еще", "").replace("Свернуть описание", "").replace("\xa0", "").replace("... ", ".").replace("...", ".")
+
+    else:
+        description = ""
+
     level_1 = bs.find_all("div", class_="f_blocks")
     
     subj = bs.find("div", class_="subject_tags_full")
-    grade = bs.find("span", class_="classes_types_a")
+    grade_str = bs.find("span", class_="classes_types_a").text
+
+    if grade_str != None:
+        grade_str = grade_str.replace(" ", "–").split("–")
+        grade = []
+        for gr in range(int(grade_str[0]), int(grade_str[1])+1):
+            grade.append(gr)
+    else:
+        grade = []
   
+    type_olimpiad = bs.find("h1").text.lower()
+    if type_olimpiad.find("олимпиад") != -1:
+        tp_olimp = "олимпиада"
+
+    if type_olimpiad.find("конкурс") != -1:
+        tp_olimp  = "конкурс"
+
+    if "tp_olimp" not in vars():
+        tp_olimp = "неизвестно"
+
     for perch in level_1:
         if perch.text[3:10] == "Перечне":
             if perch.text[54].isdigit():
@@ -56,21 +82,24 @@ def get_standart_pages(url):
 
         if perch.text[1:6] == "Призы":
             prizes = perch.text[6:]
+
         if perch.text[1:7] == "Льготы":
             prizes = perch.text[23:].replace("Подробнее о льготах →", "")
-        if perch.text[1:5] == "Очно" or perch.text[1:5] == "Заоч":
-            format = perch.text[13:]
-    
+
+        if perch.text[1:5] == "Очно" or perch.text[1:5] == "Заоч" or perch.text.find("Очная") != -1:
+            format = perch.text.replace("я", "я. ", 1).replace("\n", "")
 
     try:
+
         dct = {
             "name":name.text,
+            "description": description,
             "begin-date": date_begin,
             "end-date": date_end,
-            "type": type_olimpiad,
+            "type": tp_olimp,
             "level": level,
             "format" : format,
-            "grade":grade.text,
+            "grade":grade,
             "subjects": subj.text.replace("\n", "").replace("\xa0", " ").replace(" язык", "").split(),
             "prizes": prizes,
             "URL" : url,
@@ -81,7 +110,5 @@ def get_standart_pages(url):
         pass
 
     
-
-
 for web in URL_LIST_ALL_LINKS:
     print(get_standart_pages(web))
