@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 flag = 0
 
-for url in links_to_nto:
+def nto_get(url):
     request = requests.get(url)
     bs = BeautifulSoup(request.text, "html.parser")
     name = bs.find("h1").text.replace("  ", "").replace("\n", "")
@@ -45,16 +45,21 @@ for url in links_to_nto:
             dash_replacement = date_end.find("—")
             date_end = date_end[dash_replacement+1:]
 
+    description = bs.find("div", class_="profile-2-text").text.replace("\n", "").replace("\r", "").replace("\t", "").replace("<>","").replace("  ", "")
+
+
     if "(Студенческий трек)" not in name:
         grade = "8-11 класс"   
     else:
         grade = "Студенческий трек" 
-    type_olimpiad = "олимпиада"
+    tp_olimp = "олимпиада"
     format = "очно-заочная"
 
+    print(name, date_begin, date_end, tp_olimp, format, list_subjects, level, prizes, grade, description, end="\n")
+    
 
-    print(name, date_begin, date_end, type_olimpiad, format, list_subjects, level, prizes, grade)
-
+for web in links_to_nto:
+    print(nto_get(web))
 
 
 
