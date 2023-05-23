@@ -28,5 +28,3 @@ def date_convetation(date_string):
     date = datetime.strptime(date_string, "%d%m %Y")
     return date.strftime("%d-%m-%Y")
 
-
-print(date_convetation(date_string))

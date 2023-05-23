@@ -5,9 +5,31 @@ import json
 from datetime import datetime
 import locale
 
+
 locale.setlocale(locale.LC_TIME, "ru_RU")
 
 flag = 0
+
+month_mapping = {
+    'января': '01',
+    'февраля': '02',
+    'марта': '03',
+    'апреля': '04',
+    'мая': '05',
+    'июня': '06',
+    'июля': '07',
+    'августа': '08',
+    'сентября': '09',
+    'октября': '10',
+    'ноября': '11',
+    'декабря': '12'
+}
+
+def date_convetation(date_string):
+    for russian_month, numeric_month in month_mapping.items():
+        date_string = date_string.replace(russian_month, numeric_month)
+    date = datetime.strptime(date_string, "%d%m %Y")
+    return date.strftime("%d-%m-%Y")
 
 olimpiad = []
 
@@ -55,13 +77,15 @@ for url in links_to_nto:
             date_begin = date_id.text.replace("\n", "").replace(" ", "")
             dash_replacement = date_begin.find("—")
             date_begin = date_begin[0:dash_replacement]
-            date_begin = date_begin + ' ' + year_begin  # Вставка пробела перед словом месяца
+            date_begin = date_begin + ' ' + year_begin
+            date_begin = date_convetation(date_begin)
         if date.index(date_id) == len(date) - 1:
             date_end = date_id.text.replace("\n", "").replace(" ", "")
             dash_replacement = date_end.find("—")
             date_end = date_end[dash_replacement+1:]
             # Добавление года окончания олимпиады в поле date_end
             date_end = date_end + ' ' + year_end
+            date_end = date_convetation(date_end)
 
     if "(Студенческий трек)" not in name:
         grade = "8-11 класс"
