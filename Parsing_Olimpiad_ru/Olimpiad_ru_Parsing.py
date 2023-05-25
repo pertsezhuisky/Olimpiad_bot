@@ -1,6 +1,6 @@
 import requests
 import datetime
-
+import json
 from bs4 import BeautifulSoup
 from Olimpiad_ALL_LINKS import URL_LIST_ALL_LINKS
 from String_to_Date import check_date
@@ -94,9 +94,9 @@ def get_standart_pages(url):
         dct = {
             "name":name.text,
             "description": description,
-            "begin-date": date_begin,
-            "end-date": date_end,
-            "type": tp_olimp,
+            "begin_date": date_begin,
+            "end_date": date_end,
+            "event_type": tp_olimp,
             "level": level,
             "format" : format,
             "grade":grade,
@@ -105,10 +105,17 @@ def get_standart_pages(url):
             "URL" : url,
             } 
         return dct
-
+    
     except:
         pass
 
-    
+olimpiad = []
 for web in URL_LIST_ALL_LINKS:
-    print(get_standart_pages(web))
+    olimpiad.append(get_standart_pages(web))
+
+# Конвертируем данные в формат JSON с отступами
+json_data = json.dumps(olimpiad, ensure_ascii=False, indent=4)
+
+# Сохраняем JSON в файл
+with open("olimpiad_data_diff.json", "w", encoding="utf-8") as json_file:
+    json_file.write(json_data)
